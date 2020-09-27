@@ -87,7 +87,7 @@ class Scanner {
         }
 
         if (isAtEnd()) {
-            Lox.error(line, "Unterminated string.");
+            // Lox.error(line, "Unterminated string.");
             return;
         }
 
@@ -155,6 +155,8 @@ class Scanner {
             case '=': addToken(match('=') ? EQUAL_EQUAL : EQUAL); break;
             case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
             case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
+            case '?': addToken(QUESTION); break;
+            case ':': addToken(COLON); break;
             case '/':
                 if (match('/')) {
                     while (peek() != '\n' && !isAtEnd()) advance();
@@ -178,7 +180,7 @@ class Scanner {
                     identifier();
                 }
                 else {
-                    Lox.error(line, "Unexpected character.");
+                    // Lox.error(line, "Unexpected character.");
                 }
                 break;
         }

@@ -1,6 +1,6 @@
 package com.craftinginterpreters.lox;
 
-class AstPrinter implements Expr.Visitor<String>{
+public class RPNWriter implements Expr.Visitor<String> {
     String print(Expr expr) {
         return expr.accept(this);
     }
@@ -16,14 +16,14 @@ class AstPrinter implements Expr.Visitor<String>{
     }
 
     @Override
-    public String visitTernaryExpr(Expr.Ternary expr) {
-        return parenthesize("?!", expr.condition, expr.iftrue, expr.iffalse);
-    }
-
-    @Override
     public String visitLiteralExpr(Expr.Literal expr) {
         if (expr.value == null) return "nil";
         return expr.value.toString();
+    }
+
+    @Override
+    public String visitTernaryExpr(Expr.Ternary expr) {
+        return "";
     }
 
     @Override
@@ -34,14 +34,12 @@ class AstPrinter implements Expr.Visitor<String>{
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("(").append(name);
         for (Expr expr : exprs) {
-            builder.append(" ");
             builder.append(expr.accept(this));
+            builder.append(" ");
         }
-        builder.append(")");
+        builder.append(name);
 
         return builder.toString();
     }
 }
-

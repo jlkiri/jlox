@@ -11,7 +11,7 @@ import java.util.List;
 public class Lox {
     static boolean hadError = false;
 
-    /* public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         if (args.length > 1) {
             System.out.println("Usage: jlox [script]");
             System.exit(64);
@@ -20,9 +20,9 @@ public class Lox {
         } else {
             runPrompt();
         }
-    }*/
+    }
 
-    public static void main(String[] args) {
+    /* public static void main(String[] args) {
         Expr expression = new Expr.Binary(
                 new Expr.Unary(
                         new Token(TokenType.MINUS, "-", null, 1),
@@ -33,9 +33,9 @@ public class Lox {
                         new Expr.Literal(45.67)
                 ));
 
-        System.out.println(new AstPrinter().print(expression));
+        System.out.println(new RPNWriter().print(expression));
 
-    }
+    }*/
 
     private static void runFile(String path) throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(path));
@@ -57,8 +57,13 @@ public class Lox {
         }
     }
 
-    static void error(int line, String message) {
-        report(line, "", message);
+    static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message
+            );
+        }
     }
 
     private static void report(int line, String where, String message) {
@@ -71,9 +76,11 @@ public class Lox {
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
 
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        if (hadError) return;
+
+        System.out.println(new AstPrinter().print(expression));
     }
 }
