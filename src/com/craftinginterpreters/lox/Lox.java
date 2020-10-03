@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Lox {
@@ -81,6 +82,17 @@ public class Lox {
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
         List<Stmt> statements = parser.parse();
+
+        if (statements.size() == 1 && statements.get(0) == null) {
+            hadError = false;
+
+            Expr expr = new Parser(tokens).parseAsExpression();
+
+            if (hadError) return;
+
+            System.out.println(interpreter.interpretAsExpression(expr).toString());
+            return;
+        }
 
         if (hadError) return;
 
