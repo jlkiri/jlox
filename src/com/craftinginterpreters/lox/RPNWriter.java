@@ -6,6 +6,11 @@ public class RPNWriter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitLogicalExpr(Expr.Logical expr) {
+        return "";
+    }
+
+    @Override
     public String visitAssignExpr(Expr.Assign expr) {
         return expr.name.lexeme + " " + expr.value + " = ";
     }
