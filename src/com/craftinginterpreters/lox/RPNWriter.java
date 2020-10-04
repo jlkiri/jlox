@@ -6,6 +6,21 @@ public class RPNWriter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitCallExpr(Expr.Call call) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("() ");
+        builder.append(call.callee.accept(this));
+
+        for (Expr expr : call.arguments) {
+            builder.append(expr.accept(this));
+            builder.append(", ");
+        }
+
+        return builder.toString();
+    }
+
+    @Override
     public String visitLogicalExpr(Expr.Logical expr) {
         return "";
     }
