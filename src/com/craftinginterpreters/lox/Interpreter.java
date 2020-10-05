@@ -26,6 +26,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         });
     }
 
+
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
         LoxFunction function = new LoxFunction(stmt, environment);
@@ -65,6 +66,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitBreakStmt(Stmt.Break stmt) {
+        throw new Break(stmt.keyword);
+    }
+
+    @Override
     public Void visitReturnStmt(Stmt.Return stmt) {
         Object value = null;
         if (stmt.value != null) value = evaluate(stmt.value);
@@ -81,7 +87,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
         while (isTruthy(evaluate(stmt.condition))) {
-            execute(stmt.body);
+            try {
+                execute(stmt.body);
+            }
+            catch(Break ex) {
+                break;
+            }
         }
         return null;
     }
@@ -93,7 +104,8 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             for (Stmt statement: statements) {
                 execute(statement);
             }
-        } finally {
+        }
+        finally {
              this.environment = previous;
         }
     }
@@ -273,7 +285,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             for (Stmt statement : statements) {
                 execute(statement);
             }
-        } catch (RuntimeError error) {
+        }
+        catch (Break ex) {
+            throw new RuntimeError(ex.token, "Cannot use break outside of a loop.");
+        }
+        catch (RuntimeError error) {
             Lox.runtimeError(error);
         }
     }

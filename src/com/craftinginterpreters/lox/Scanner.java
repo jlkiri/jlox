@@ -25,6 +25,7 @@ class Scanner {
         keywords.put("fun",    FUN);
         keywords.put("if",     IF);
         keywords.put("nil",    NIL);
+        keywords.put("break",  BREAK);
         keywords.put("or",     OR);
         keywords.put("print",  PRINT);
         keywords.put("return", RETURN);
