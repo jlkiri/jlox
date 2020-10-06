@@ -1,3 +1,30 @@
-print 1 + 1;
-break;
-print 2 + 2;
+fun createCounter() {
+  var count = 0;
+
+  fun increase() {
+    count = count + 1;
+    return count;
+  }
+
+  return increase;
+}
+
+fun mod(dividend, divisor) {
+  var res = dividend - divisor;
+  if (res == 0) return res;
+  if (res < 0) return res * -1;
+  return mod(res, divisor);
+}
+
+fun isOdd(num) {
+  return mod(num, 2) == 0;
+}
+
+var counter = createCounter();
+
+for (var i = 0; i <= 100; i = i + 1) {
+  var c = counter();
+  var msg = !isOdd(c) ? "🌕" : "🔥";
+  print msg;
+}
+
