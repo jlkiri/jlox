@@ -3,12 +3,17 @@ package com.craftinginterpreters.lox;
 import java.util.HashMap;
 import java.util.Map;
 
+
 class LoxInstance {
-    private LoxClass klass;
+    private final LoxClass klass;
     private final Map<String, Object> fields = new HashMap<>();
 
     LoxInstance(LoxClass klass) {
         this.klass = klass;
+    }
+
+    LoxInstance() {
+        this.klass = new LoxClass("Metaclass");
     }
 
     Object get(Token name) {
@@ -16,8 +21,17 @@ class LoxInstance {
             return fields.get(name.lexeme);
         }
 
+        LoxFunction method = klass.findMethod(name.lexeme);
+        if (method != null) {
+            return method.bind(this);
+        }
+
         throw new RuntimeError(name,
                 "Undefined property '" + name.lexeme + "'.");
+    }
+
+    void set(Token name, Object value) {
+        fields.put(name.lexeme, value);
     }
 
     @Override
